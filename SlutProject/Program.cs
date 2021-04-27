@@ -12,24 +12,18 @@ namespace SlutProject
             Player player = new Player();
             while (true)
             {
-                player.children.Add(spawner.Spawner());
-                System.Console.WriteLine(player.children[player.children.Count - 1]);
+                Instructions();
+                player.ChooseStarter(spawner);
                 Console.ReadKey();
-
             }
         }
-        static void ChooseStarter(Player p, ChildSpawner spawner)
+        static void Instructions()
         {
-            System.Console.WriteLine("Before  you can begin you adventure och weaponizing young children for your own profit and entertainment you must choose a starting child.");
-            System.Console.WriteLine("You will be presented with 3 choices. Press enter to continue");
+            System.Console.WriteLine("In this game you will navigate entirely by selecting an option presented in the form of a multi-choice page.");
+            System.Console.WriteLine("To navigate this page you may use the up and down arrows on your keyboard. With enter you select the currently hovered option. Any other keys will do nothing.");
+            System.Console.WriteLine("To close this page press enter. Any other button will write text that does not affect the game in nay way.");
             Console.ReadLine();
-            Child[] starterChildren = new Child[3];
-            string[] choices = new string[3];
-            for (int i = 0; i < starterChildren.Length; i++)
-            {
-                starterChildren[i] = spawner.Spawner();
-                choices[i] = $"Name: {starterChildren[i].Name} Age: {starterChildren[i].Level}";
-            }
+            Console.Clear();
         }
 
     }

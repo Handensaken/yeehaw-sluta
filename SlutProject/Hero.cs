@@ -6,6 +6,7 @@ namespace SlutProject
     {
         public Hero(){
             XpMultiplier = 3.0f;
+            Alignment = "A Hero!";
         }
         public override int SuperAttack()
         {

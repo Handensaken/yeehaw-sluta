@@ -6,6 +6,7 @@ namespace SlutProject
     {
         public Demon(){
             XpMultiplier = 3.0f;
+            Alignment = "A Demon!";
         }   
         public override int SuperAttack()
         {

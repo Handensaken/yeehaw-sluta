@@ -6,6 +6,7 @@ namespace SlutProject
     {
         public GoodChild(){
             XpMultiplier = 1.5f;
+            Alignment = "Good.";
         }
         public override int SuperAttack()
         {

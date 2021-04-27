@@ -5,7 +5,8 @@ namespace SlutProject
     public class BadChild : Child
     {
         public BadChild(){
-            XpMultiplier = 0.8f;
+            XpMultiplier = 1f;
+            Alignment = "Bad.";
         }
         public override int SuperAttack()
         {
