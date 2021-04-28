@@ -4,9 +4,11 @@ namespace SlutProject
 {
     public class GoodChild : Child
     {
-        public GoodChild(){
+        public GoodChild(MasterGameControl c) : base(c)
+        {
             XpMultiplier = 1.5f;
             Alignment = "Good.";
+            HP = 20;
         }
         public override int SuperAttack()
         {

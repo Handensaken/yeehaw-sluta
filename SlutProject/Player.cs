@@ -6,10 +6,23 @@ namespace SlutProject
 {
     public class Player
     {
-        Room currentRoom = Room.rooms["Battle"];
+        MasterGameControl controller;
+        Room currentRoom = Room.rooms["Shop"];
         public List<Child> Children { get; set; } = new List<Child>();
         private List<string> possibleChoices = new List<string>();
 
+        public List<Item> Inventory { get; private set; } = new List<Item>();
+        public int Cash { get; private set; }
+
+        public Player()
+        {
+            Inventory.Clear();
+            Cash = 30;
+        }
+        public void GetController(MasterGameControl control)
+        {
+            controller = control;
+        }
         public void ChooseStarter(ChildSpawner spawner)
         {
             System.Console.WriteLine("Before  you can begin your adventure of weaponizing young children for your own profit and entertainment, you must choose a starting child.");
@@ -19,7 +32,7 @@ namespace SlutProject
             string[] choices = new string[3];
             for (int i = 0; i < starterChildren.Length; i++)
             {
-                starterChildren[i] = spawner.Spawner();
+                starterChildren[i] = spawner.Spawner(controller);
                 choices[i] = $"Name: {starterChildren[i].Name} Level: {starterChildren[i].Level}";
             }
             Children.Add(starterChildren[Selection(choices, "Choose one of the following children", true)]);
@@ -29,32 +42,40 @@ namespace SlutProject
         public void AddInitialChoices()
         {
             possibleChoices.Clear();
+            possibleChoices.Add("Stay");
             possibleChoices.Add("Move");
             possibleChoices.Add("Punish children");
             possibleChoices.Add("Exit game");
             DecideChoice();
         }
-        private void DecideChoice()
+        public void DecideChoice()
         {
             switch (Selection(possibleChoices.ToArray(), "Choose action", true))
             {
                 case 0:
                     {
-                        System.Console.WriteLine("This one is still in development because I need a selection method that returns a string.");
+                        controller.TempName(currentRoom);
                         break;
                     }
                 case 1:
                     {
-
+                        System.Console.WriteLine("This one is still in development because I need a selection method that returns a string.");
+                        Console.ReadKey();
                         break;
                     }
                 case 2:
+                    {
+                        controller.PunishChildren();
+                        break;
+                    }
+                case 3:
                     {
                         Exit();
                         break;
                     }
             }
         }
+
         private void Exit()
         {
             possibleChoices.Clear();
@@ -73,6 +94,22 @@ namespace SlutProject
                         break;
                     }
             }
+        }
+        public bool CheckBalance(int value)
+        {
+            if (Cash >= value)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public void RemoveCash(int value)
+        {
+            Cash -= value;
         }
 
         //you know the usual shebang

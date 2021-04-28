@@ -20,7 +20,7 @@ namespace SlutProject
                 }
             }
         }
-        public T Selection(string[] choices, string q, bool SoI)
+        public Key<T> Selection(string[] choices, string q, bool SoI)
         {
             int current = 0;
             while (true)
@@ -53,13 +53,13 @@ namespace SlutProject
                                 Key<string> stringKey = new Key<string>();
                                 stringKey.value = "test";
                                 
-                              //  return stringKey.value;
+                                //return stringKey;
                             }
                             else
                             {
 
                             }
-                            return value;
+                            return new Key<T>();
                         }
                     default:
                         {

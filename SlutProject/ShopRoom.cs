@@ -8,5 +8,15 @@ namespace SlutProject
         {
             return base.GetChoices();
         }
+        public override string[] GetActions()
+        {
+            Actions = new string[]{
+                "Shop",
+                "Go Back"
+            };
+            return Actions;
+        }
+        
+        
     }
 }

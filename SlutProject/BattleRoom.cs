@@ -9,5 +9,13 @@ namespace SlutProject
             choices.Add("test2");
             return base.GetChoices();
         }
+        public override string[] GetActions()
+        {
+            Actions = new string[]{
+                "Begin Battle",
+                "Go Back"
+            };
+            return Actions;
+        }
     }
 }
