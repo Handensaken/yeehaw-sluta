@@ -8,12 +8,13 @@ namespace SlutProject
 
         static void Main(string[] args)
         {
+            Room.InitializeRooms();
             ChildSpawner spawner = new ChildSpawner();
             Player player = new Player();
             while (true)
             {
                 Instructions();
-                player.ChooseStarter(spawner);
+                player.ChooseStarter(spawner);  // move outside main playing loop
                 Console.ReadKey();
             }
         }
