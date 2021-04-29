@@ -6,6 +6,9 @@ namespace SlutProject
     {
          public override string[] GetChoices()
         {
+            choices.Clear();
+            choices.Add("Start");
+            choices.Add("Stay");
             return base.GetChoices();
         }
         public override string[] GetActions()
@@ -17,6 +20,6 @@ namespace SlutProject
             return Actions;
         }
         
-        
+
     }
 }

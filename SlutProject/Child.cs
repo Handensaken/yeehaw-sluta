@@ -11,6 +11,8 @@ namespace SlutProject
         Random rand = new Random();
         public string Name { get; private set; }
         public int HP { get; protected set; }
+
+        protected int maxHP;
         public float Energy { get; set; }
         public float XpMultiplier { get; protected set; }
         public int Level { get; private set; }
@@ -46,6 +48,11 @@ namespace SlutProject
                 controller.ChildDeathEvent(this);
             }
         }
-
+        public void Recover(int recoverAmount)
+        {
+            HP += recoverAmount;
+            if(HP > maxHP){HP = maxHP;}
+            System.Console.WriteLine($"healed {Name} for {recoverAmount} HP");
+        }
     }
 }

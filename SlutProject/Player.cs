@@ -1,3 +1,4 @@
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.Versioning;
 using System;
 using System.Collections.Generic;
@@ -6,18 +7,27 @@ namespace SlutProject
 {
     public class Player
     {
+
         MasterGameControl controller;
-        Room currentRoom = Room.rooms["Shop"];
+        Room currentRoom = Room.rooms["Start"];
         public List<Child> Children { get; set; } = new List<Child>();
         private List<string> possibleChoices = new List<string>();
 
         public List<Item> Inventory { get; private set; } = new List<Item>();
+
+        public Dictionary<string, int> inv = new Dictionary<string, int>();
         public int Cash { get; private set; }
+
+        public bool InBattle { private get; set; }
 
         public Player()
         {
             Inventory.Clear();
             Cash = 30;
+            for (int i = 0; i < Item.availableItems.Length; i++)
+            {
+                inv.Add(Item.availableItems[i], 0);
+            }
         }
         public void GetController(MasterGameControl control)
         {
@@ -35,14 +45,15 @@ namespace SlutProject
                 starterChildren[i] = spawner.Spawner(controller);
                 choices[i] = $"Name: {starterChildren[i].Name} Level: {starterChildren[i].Level}";
             }
-            Children.Add(starterChildren[Selection(choices, "Choose one of the following children", true)]);
+            Children.Add(starterChildren[Selection(choices, "Choose one of the following children", true).ReturnInt]);
             System.Console.WriteLine($"you chose {Children[Children.Count - 1].Name}. It is level {Children[Children.Count - 1].Level} and is {Children[Children.Count - 1].Alignment}");
         }
 
         public void AddInitialChoices()
         {
             possibleChoices.Clear();
-            possibleChoices.Add("Stay");
+            possibleChoices.Add("Inventory");
+            possibleChoices.Add("Take room action");
             possibleChoices.Add("Move");
             possibleChoices.Add("Punish children");
             possibleChoices.Add("Exit game");
@@ -50,25 +61,29 @@ namespace SlutProject
         }
         public void DecideChoice()
         {
-            switch (Selection(possibleChoices.ToArray(), "Choose action", true))
+            switch (Selection(possibleChoices.ToArray(), "Choose action", true).ReturnInt)
             {
                 case 0:
                     {
-                        controller.TempName(currentRoom);
+                        SetInventoryItems();
                         break;
                     }
                 case 1:
                     {
-                        System.Console.WriteLine("This one is still in development because I need a selection method that returns a string.");
-                        Console.ReadKey();
+                        controller.TempName(currentRoom);
                         break;
                     }
                 case 2:
                     {
-                        controller.PunishChildren();
+                        currentRoom = controller.GetRoom(currentRoom);
                         break;
                     }
                 case 3:
+                    {
+                        controller.PunishChildren();
+                        break;
+                    }
+                case 4:
                     {
                         Exit();
                         break;
@@ -76,12 +91,95 @@ namespace SlutProject
             }
         }
 
+        private void SetInventoryItems()
+        {
+            possibleChoices.Clear();
+            /*foreach (Item i in Inventory)
+            {
+                possibleChoices.Add(i.Name);
+            }*/
+
+            foreach (string s in inv.Keys)
+            {
+                possibleChoices.Add(s);
+            }
+
+            possibleChoices.Add("Back");
+
+
+            SelectItem();
+        }
+        private void SelectItem()
+        {
+            string objectReference = Selection(possibleChoices.ToArray(), "Choose Item", false).ReturnString;
+            if (objectReference == "Back")
+            {
+                AddInitialChoices();
+            }
+            else if (inv[objectReference] > 0)
+            {
+                System.Console.WriteLine("item is avaliable");
+
+                possibleChoices.Clear();
+                possibleChoices.Add("Yes");
+                possibleChoices.Add("No");
+                switch (Selection(possibleChoices.ToArray(), "Are you sure?", true).ReturnInt)
+                {
+                    case 0: //This is not very efficient code but it works. Unfortunate :)
+                        {
+                            if (objectReference == "Band Aid")
+                            {
+                                inv[objectReference] -= 1;
+                                Item test = new BandAid();
+                                test.Effect(SelectChild());
+                            }
+                            else if (objectReference == "Net")
+                            {
+                                //Only make usable in battle
+                                if (InBattle)
+                                {
+                                    System.Console.WriteLine("Do net things");
+                                }
+                                else
+                                {
+                                    System.Console.WriteLine("This item cannot be used in this state");
+                                }
+                            }
+                            else
+                            {
+                                System.Console.WriteLine("woah shits fucked");
+                            }
+                            break;
+                        }
+                    case 1:
+                        {
+                            SetInventoryItems();
+                            break;
+                        }
+                }
+            }
+            else
+            {
+                System.Console.WriteLine("not avaliable");
+            }
+            Console.ReadKey();
+        }
+        private Child SelectChild()
+        {
+            possibleChoices.Clear();
+            for (int i = 0; i < Children.Count; i++)
+            {
+                possibleChoices.Add(Children[i].Name);
+            }
+            return Children[Selection(possibleChoices.ToArray(), "Select a child", true).ReturnInt];
+
+        }
         private void Exit()
         {
             possibleChoices.Clear();
             possibleChoices.Add("Yes");
             possibleChoices.Add("No");
-            switch (Selection(possibleChoices.ToArray(), "Are you sure?", true))
+            switch (Selection(possibleChoices.ToArray(), "Are you sure?", true).ReturnInt)
             {
                 case 0:
                     {
@@ -128,7 +226,7 @@ namespace SlutProject
                 }
             }
         }
-        public int Selection(string[] choices, string q, bool SoI)
+        public Key Selection(string[] choices, string q, bool SoI)
         {
             int current = 0;
             while (true)
@@ -156,7 +254,16 @@ namespace SlutProject
                         break;
                     case ConsoleKey.Enter:
                         {
-                            return current;
+                            Key returningKey = new Key();
+                            if (SoI)
+                            {
+                                returningKey.ReturnInt = current;
+                            }
+                            else
+                            {
+                                returningKey.ReturnString = choices[current];
+                            }
+                            return returningKey;
                         }
                     default:
                         {

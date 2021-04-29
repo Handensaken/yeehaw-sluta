@@ -4,20 +4,16 @@ namespace SlutProject
 {
     public class BandAid : Item
     {
-        public BandAid(){
+        public BandAid()
+        {
             Name = "Band Aid";
             Cost = 10;
+            Usable = true;
         }
-        public int Recovery
+        private int recovery = 4;
+        public override void Effect(Child c)
         {
-            get
-            {
-                return Recovery;
-            }
-            private set
-            {
-                Recovery = 4;
-            }
+            c.Recover(recovery);
         }
     }
 }

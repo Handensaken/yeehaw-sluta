@@ -7,7 +7,10 @@ namespace SlutProject
         
         public override string[] GetChoices()
         {
-            choices.Add("test");
+            choices.Clear();
+            choices.Add("Shop");
+            choices.Add("Battle");
+            choices.Add("Stay");
             return base.GetChoices();
         }
         public override string[] GetActions()

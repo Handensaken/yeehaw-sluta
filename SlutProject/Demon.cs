@@ -9,6 +9,7 @@ namespace SlutProject
             XpMultiplier = 3.0f;
             Alignment = "A Demon!";
             HP = 45;
+            maxHP = HP;
         }
         public override int SuperAttack()
         {

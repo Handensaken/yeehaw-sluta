@@ -1,3 +1,6 @@
+using System.Diagnostics;
+using System.Net.Security;
+using System.Linq;
 using System;
 
 namespace SlutProject
@@ -36,7 +39,7 @@ namespace SlutProject
         }
         public void TempName(Room current)
         {
-            switch (player.Selection(current.GetActions(), "Select an Action", true))
+            switch (player.Selection(current.GetActions(), "Select an Action", true).ReturnInt)
             {
                 case 0:
                     {
@@ -50,9 +53,10 @@ namespace SlutProject
                         {
                             Shop(current);
                         }
-                        else if (current == Room.rooms["BattleRoom"])
+                        else if (current == Room.rooms["Battle"])
                         {
-
+                            System.Console.WriteLine("Do battle things");
+                            Console.ReadKey();
                         }
                         else
                         {
@@ -79,18 +83,22 @@ namespace SlutProject
         }
         private void Shop(Room current)
         {
-            switch (player.Selection(Item.availableItems, "Choose item", true))
+            switch (player.Selection(Item.availableItems, "Choose item", true).ReturnInt)
             {
                 case 0:
                     {
                         if (player.CheckBalance(10))    //this is very bad and lazy coding. Too bad :)
-                        {        
+                        {
                             player.Inventory.Add(new BandAid());
+
+                            player.inv["Band Aid"] += 1;
+
                             player.RemoveCash(10);
                             System.Console.WriteLine("Bought a band aid");
                             Console.ReadKey();
                         }
-                        else{
+                        else
+                        {
                             System.Console.WriteLine("Insufficient cash");
                             Console.ReadKey();
                             TempName(Room.rooms["Shop"]);
@@ -99,9 +107,43 @@ namespace SlutProject
                     }
                 case 1:
                     {
+                        if (player.CheckBalance(20))
+                        {
+
+                            player.inv["Net"] += 1;
+                            player.RemoveCash(20);
+                            System.Console.WriteLine("Bought a net");
+                            Console.ReadKey();
+                        }
+                        else
+                        {
+                            System.Console.WriteLine("Insufficient cash");
+                            Console.ReadKey();
+                            TempName(Room.rooms["Shop"]);
+                        }
+                        break;
+                    }
+                case 2:
+                    {
                         TempName(Room.rooms["Shop"]); //this is not pretty either.
                         break;
                     }
+            }
+        }
+        public Room GetRoom(Room currentRoom)
+        {
+            string tempString = player.Selection(currentRoom.GetChoices().ToArray(), "Select a room", false).ReturnString;
+            if (tempString == "Stay")
+            {
+                System.Console.WriteLine($"Stayed in {tempString}");
+                Console.ReadKey();
+                return currentRoom;
+            }
+            else
+            {
+                System.Console.WriteLine($"entered {tempString}");
+                Console.ReadKey();
+                return Room.rooms[tempString];
             }
         }
     }
