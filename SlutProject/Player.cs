@@ -18,7 +18,7 @@ namespace SlutProject
         public Dictionary<string, int> inv = new Dictionary<string, int>();
         public int Cash { get; private set; }
 
-        public bool InBattle { private get; set; }
+        public bool InBattle { get; set; }
 
         public Player()
         {
@@ -52,6 +52,7 @@ namespace SlutProject
         public void AddInitialChoices()
         {
             possibleChoices.Clear();
+            possibleChoices.Add("Children");
             possibleChoices.Add("Inventory");
             possibleChoices.Add("Take room action");
             possibleChoices.Add("Move");
@@ -65,32 +66,48 @@ namespace SlutProject
             {
                 case 0:
                     {
-                        SetInventoryItems();
+                        DisplayChildStats();
                         break;
                     }
                 case 1:
                     {
-                        controller.TempName(currentRoom);
+                        SetInventoryItems();
                         break;
                     }
                 case 2:
                     {
-                        currentRoom = controller.GetRoom(currentRoom);
+                        controller.TempName(currentRoom);
                         break;
                     }
                 case 3:
                     {
-                        controller.PunishChildren();
+                        currentRoom = controller.GetRoom(currentRoom);
                         break;
                     }
                 case 4:
+                    {
+                        controller.PunishChildren();
+                        break;
+                    }
+                case 5:
                     {
                         Exit();
                         break;
                     }
             }
         }
+        private void DisplayChildStats()
+        {
+            Child displayChild = SelectChild();
 
+            System.Console.WriteLine($"Name: {displayChild.Name}");
+            System.Console.WriteLine($"HP: {displayChild.HP}");
+            System.Console.WriteLine($"Level: {displayChild.Level}");
+            System.Console.WriteLine($"XP: {displayChild.Xp}/{displayChild.XpThreshold}");
+            System.Console.WriteLine($"Child is {displayChild.Alignment}");
+            Console.ReadKey();
+
+        }
         private void SetInventoryItems()
         {
             possibleChoices.Clear();

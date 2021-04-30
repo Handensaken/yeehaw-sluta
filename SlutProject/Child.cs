@@ -17,12 +17,14 @@ namespace SlutProject
         public float XpMultiplier { get; protected set; }
         public int Level { get; private set; }
         public int Xp { get; private set; }
+        public float XpThreshold { get; private set; }
         public string Alignment { get; protected set; }
         public Child(MasterGameControl c)
         {
             controller = c;
             Level = 1;
             Name = File.ReadAllLines(@"names.txt")[rand.Next(308)];
+            XpThreshold = 10;
         }
         public virtual int SuperAttack()
         {
@@ -32,6 +34,13 @@ namespace SlutProject
         {
             Xp += (int)Math.Round(xpValue * XpMultiplier);
             System.Console.WriteLine($"{Name} earned {xpValue} experience!");
+            if (Xp >= XpThreshold)
+            {
+                System.Console.WriteLine($"{Name} leveled up!");
+                Level += 1;
+                Xp = 0;
+                XpThreshold *= 1.5f;
+            }
         }
         public void Punishment()
         {
@@ -51,7 +60,7 @@ namespace SlutProject
         public void Recover(int recoverAmount)
         {
             HP += recoverAmount;
-            if(HP > maxHP){HP = maxHP;}
+            if (HP > maxHP) { HP = maxHP; }
             System.Console.WriteLine($"healed {Name} for {recoverAmount} HP");
         }
     }

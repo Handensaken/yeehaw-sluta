@@ -7,6 +7,7 @@ namespace SlutProject
 {
     public class MasterGameControl
     {
+        ChildSpawner spawner = new ChildSpawner();
         Player player;
         public MasterGameControl(Player p)
         {
@@ -55,7 +56,7 @@ namespace SlutProject
                         }
                         else if (current == Room.rooms["Battle"])
                         {
-                            System.Console.WriteLine("Do battle things");
+                            StartBattle();
                             Console.ReadKey();
                         }
                         else
@@ -70,6 +71,43 @@ namespace SlutProject
                         player.AddInitialChoices();
                         break;
                     }
+            }
+        }
+        private void StartBattle()
+        {
+            player.InBattle = true;
+            Child opponentChild = spawner.Spawner(this);
+            System.Console.WriteLine($"Engaged Level {opponentChild.Level} {opponentChild.Name} in battle");
+            BattleSession(opponentChild);
+        }
+        private void BattleSession(Child opponent)
+        {
+            string[] battleActions = {
+                "Attack",
+                "Run",
+                "Inventory"
+            };
+            while (player.InBattle)
+            {
+                switch (player.Selection(battleActions, "Select Action", true).ReturnInt)
+                {
+                    case 0:
+                        {
+                            System.Console.WriteLine("do punchy thing");
+                            break;
+                        }
+                    case 1:
+                        {
+                            System.Console.WriteLine("nigerundayo");
+                            break;
+                        }
+                    case 2:
+                        {
+                            System.Console.WriteLine("Inventory");
+                            break;
+                        }
+                }
+
             }
         }
         private void InfoBoard()
