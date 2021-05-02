@@ -306,7 +306,7 @@ namespace SlutProject
             System.Console.WriteLine("Threw net");
             Key.Press();
             Random rand = new Random();
-            if (rand.Next(6, 7) == 6)
+            if (rand.Next(1, 7) == 6)
             {
                 target.IsWild = false;
                 player.Children.Add(target);
