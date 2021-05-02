@@ -20,7 +20,7 @@ namespace SlutProject
 
         private Child activeChild;
 
-        public bool InBattle { get; set; }
+        public bool InBattle { get; set; }  //this shouldn't be public but I can't manage another reasonable way
 
         public Player()
         {

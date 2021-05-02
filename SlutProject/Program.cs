@@ -14,7 +14,7 @@ namespace SlutProject
             MasterGameControl gameControl = new MasterGameControl(player);
             player.GetController(gameControl);
             Instructions(player);
-            player.ChooseStarter(spawner);  // move outside main playing loop
+            player.ChooseStarter(spawner);  
             while (true)
             {
                 player.AddInitialChoices();
