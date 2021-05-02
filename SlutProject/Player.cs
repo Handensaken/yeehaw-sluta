@@ -18,6 +18,8 @@ namespace SlutProject
         public Dictionary<string, int> inv = new Dictionary<string, int>();
         public int Cash { get; private set; }
 
+        private Child activeChild;
+
         public bool InBattle { get; set; }
 
         public Player()
@@ -42,13 +44,18 @@ namespace SlutProject
             string[] choices = new string[3];
             for (int i = 0; i < starterChildren.Length; i++)
             {
-                starterChildren[i] = spawner.Spawner(controller);
+                starterChildren[i] = spawner.Spawner(controller, false);
                 choices[i] = $"Name: {starterChildren[i].Name} Level: {starterChildren[i].Level}";
             }
+
             Children.Add(starterChildren[Selection(choices, "Choose one of the following children", true).ReturnInt]);
+            activeChild = Children[Children.Count - 1];
             System.Console.WriteLine($"you chose {Children[Children.Count - 1].Name}. It is level {Children[Children.Count - 1].Level} and is {Children[Children.Count - 1].Alignment}");
         }
-
+        public void ModifyBalance(int modifier)
+        {
+            Cash += modifier;
+        }
         public void AddInitialChoices()
         {
             possibleChoices.Clear();
@@ -98,8 +105,9 @@ namespace SlutProject
         }
         private void DisplayChildStats()
         {
-            Child displayChild = SelectChild();
+            Child displayChild = SelectChild(true);
 
+            if (displayChild == null) { return; }
             System.Console.WriteLine($"Name: {displayChild.Name}");
             System.Console.WriteLine($"HP: {displayChild.HP}");
             System.Console.WriteLine($"Level: {displayChild.Level}");
@@ -108,19 +116,16 @@ namespace SlutProject
             Console.ReadKey();
 
         }
-        private void SetInventoryItems()
+        public void SetInventoryItems()
         {
             possibleChoices.Clear();
-            /*foreach (Item i in Inventory)
-            {
-                possibleChoices.Add(i.Name);
-            }*/
+
 
             foreach (string s in inv.Keys)
             {
                 possibleChoices.Add(s);
             }
-
+            possibleChoices.RemoveAt(inv.Count - 1);
             possibleChoices.Add("Back");
 
 
@@ -131,7 +136,14 @@ namespace SlutProject
             string objectReference = Selection(possibleChoices.ToArray(), "Choose Item", false).ReturnString;
             if (objectReference == "Back")
             {
-                AddInitialChoices();
+                if (!InBattle)
+                {
+                    AddInitialChoices();
+                }
+                else
+                {
+                    controller.BattleSelection();
+                }
             }
             else if (inv[objectReference] > 0)
             {
@@ -146,16 +158,18 @@ namespace SlutProject
                         {
                             if (objectReference == "Band Aid")
                             {
-                                inv[objectReference] -= 1;
-                                Item test = new BandAid();
-                                test.Effect(SelectChild());
+                                inv[objectReference]--;
+                                Item bandAid = new BandAid();
+                                bandAid.Effect(SelectChild(false), controller);
                             }
                             else if (objectReference == "Net")
                             {
                                 //Only make usable in battle
                                 if (InBattle)
                                 {
-                                    System.Console.WriteLine("Do net things");
+                                    inv[objectReference]--;
+                                    Item net = new Net();
+                                    net.Effect(controller.oppChild, controller);
                                 }
                                 else
                                 {
@@ -178,18 +192,42 @@ namespace SlutProject
             else
             {
                 System.Console.WriteLine("not avaliable");
+                if (InBattle)
+                {
+                    Console.ReadKey();
+                    controller.BattleSelection();
+                }
             }
             Console.ReadKey();
         }
-        private Child SelectChild()
+        public Child SelectChild(bool optional)
         {
             possibleChoices.Clear();
             for (int i = 0; i < Children.Count; i++)
             {
                 possibleChoices.Add(Children[i].Name);
             }
-            return Children[Selection(possibleChoices.ToArray(), "Select a child", true).ReturnInt];
-
+            if (optional)
+            {
+                possibleChoices.Add("back");
+            }
+            int index = Selection(possibleChoices.ToArray(), "Select a child", true).ReturnInt;
+            if (index == Children.Count)
+            {
+                if (InBattle)
+                {
+                    return activeChild;
+                }
+                else
+                {
+                    AddInitialChoices();
+                }
+                return null;
+            }
+            else
+            {
+                return Children[index];
+            }
         }
         private void Exit()
         {

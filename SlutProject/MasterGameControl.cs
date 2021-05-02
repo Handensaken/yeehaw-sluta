@@ -15,21 +15,38 @@ namespace SlutProject
         }
         public void ChildDeathEvent(Child c)
         {
-            System.Console.WriteLine($"{c.Name} has suffered great damage and succumbed to their grim injuries.");
-            player.Children.Remove(c);
-            //Console.ReadKey();
+            if (!c.IsWild)
+            {
+                System.Console.WriteLine($"{c.Name} has suffered great damage and succumbed to their grim injuries.");
+                player.Children.Remove(c);
+                if (player.InBattle && player.Children.Count == 0)
+                {
+                    player.InBattle = false;
+                    System.Console.WriteLine($"All your children are dead");
+                }
+                else
+                {
+                    playerActiveChild = player.SelectChild(false);
+                }
+            }
+            else
+            {
+                System.Console.WriteLine($"The opposing {c.Name} has been brutally slain");
+                System.Console.WriteLine("You won the battle");
+                player.InBattle = false;
+                player.ModifyBalance(10);
+                System.Console.WriteLine("gained 10 moneys");
+            }
         }
 
         public void PunishChildren()
         {
-            if (player.Children.Count >= 1)
+            if (player.Children.Count > 0)
             {
-                for (int i = 0; i < player.Children.Count; i++)
-                {
-                    System.Console.WriteLine(player.Children.Count);
-                    player.Children[i].Punishment();
-                    Console.ReadKey();
-                }
+                Child target = player.SelectChild(true);
+                if (target == null) { return; }
+                target.Punishment();
+                Console.ReadKey();
             }
             else
             {
@@ -75,39 +92,130 @@ namespace SlutProject
         }
         private void StartBattle()
         {
-            player.InBattle = true;
-            Child opponentChild = spawner.Spawner(this);
-            System.Console.WriteLine($"Engaged Level {opponentChild.Level} {opponentChild.Name} in battle");
-            BattleSession(opponentChild);
+            if (player.Children.Count > 0)
+            {
+
+                player.InBattle = true;
+                Child opponentChild = spawner.Spawner(this, true);
+                System.Console.WriteLine($"Engaged Level {opponentChild.Level} {opponentChild.Name} in battle");
+                Console.ReadKey();
+                BattleSession(opponentChild);
+            }
+            else
+            {
+                TempName(Room.rooms["Battle"]);
+            }
         }
+        public Child oppChild { get; private set; }
+        private Child playerActiveChild;
         private void BattleSession(Child opponent)
+        {
+            playerActiveChild = player.Children[0];
+            oppChild = opponent;
+            while (player.InBattle)
+            {
+                BattleSelection();
+                if (oppChild.HP > 0 && player.InBattle)
+                {
+                    OpponentsTurn(opponent, playerActiveChild);
+                }
+            }
+            System.Console.WriteLine("Battle ended");
+            Console.ReadKey();
+            TempName(Room.rooms["Battle"]);
+        }
+        public void BattleSelection()
         {
             string[] battleActions = {
                 "Attack",
-                "Run",
-                "Inventory"
+                "Inventory",
+                "Children",
+                "Run"
             };
-            while (player.InBattle)
+            switch (player.Selection(battleActions, $"Select Action (Your {playerActiveChild.Name}'s HP: {playerActiveChild.HP}. Opposing {oppChild.Name}'s HP: {oppChild.HP})", true).ReturnInt)
             {
-                switch (player.Selection(battleActions, "Select Action", true).ReturnInt)
-                {
-                    case 0:
-                        {
-                            System.Console.WriteLine("do punchy thing");
-                            break;
-                        }
-                    case 1:
-                        {
-                            System.Console.WriteLine("nigerundayo");
-                            break;
-                        }
-                    case 2:
-                        {
-                            System.Console.WriteLine("Inventory");
-                            break;
-                        }
-                }
+                case 0:
+                    {
+                        Attack();
+                        Console.ReadKey();
+                        break;
+                    }
+                case 1:
+                    {
+                        System.Console.WriteLine("Inventory");
+                        player.SetInventoryItems();
+                        break;
+                    }
+                case 2:
+                    {
+                        SwitchChild();
+                        break;
+                    }
+                case 3:
+                    {
+                        Run();
+                        Console.ReadKey();
+                        break;
+                    }
+            }
+        }
+        private void SwitchChild()
+        {
+            Child pendingChild = player.SelectChild(true);
+            if (playerActiveChild == pendingChild)
+            {
+                BattleSelection();
+            }
+            else
+            {
+                playerActiveChild = pendingChild;
+                BattleSelection();
+            }
 
+        }
+        private void Attack()
+        {
+            string[] attackChoices = { "Attack", "Super Attack", "Go Back" };
+            switch (player.Selection(attackChoices, $"Select move (Your {playerActiveChild.Name}'s HP: {playerActiveChild.HP}. Opposing {oppChild.Name}'s HP: {oppChild.HP})", true).ReturnInt)
+            {
+                case 0:
+                    {
+                        oppChild.Hurt(playerActiveChild.Attack());
+                        // System.Console.WriteLine("attaku");
+                        break;
+                    }
+                case 1:
+                    {
+                        playerActiveChild.SuperAttack(oppChild, player, playerActiveChild);
+                        //System.Console.WriteLine("supa kicka");
+                        break;
+                    }
+                case 2:
+                    {
+                        // System.Console.WriteLine("go bakko");
+                        BattleSelection();
+                        break;
+                    }
+            }
+
+        }
+        private void Run()
+        {
+            System.Console.WriteLine("Ran away");
+            player.InBattle = false;
+        }
+        private void OpponentsTurn(Child oC, Child aC)
+        {
+            Random rand = new Random();
+            if (rand.Next(2) == 1 && oC.Energy > 0)
+            {
+                oC.SuperAttack(aC, player, oppChild);
+                Console.ReadKey();
+            }
+            else
+            {
+                aC.Hurt(oC.Attack());
+                Console.ReadKey();
             }
         }
         private void InfoBoard()
@@ -183,6 +291,24 @@ namespace SlutProject
                 Console.ReadKey();
                 return Room.rooms[tempString];
             }
+        }
+        public void Catch(Child target)
+        {
+            System.Console.WriteLine("Threw net");
+            Console.ReadKey();
+            Random rand = new Random();
+            if (rand.Next(6, 7) == 6)
+            {
+                target.IsWild = false;
+                player.Children.Add(target);
+                player.InBattle = false;
+                System.Console.WriteLine($"Successfully caught {target.Name}");
+            }
+            else
+            {
+                System.Console.WriteLine($"You missed {target.Name} with the net");
+            }
+            Console.ReadKey();
         }
     }
 }

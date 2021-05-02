@@ -13,7 +13,7 @@ namespace SlutProject
         };
         public string Name { get; protected set; }
         public int Cost { get; protected set; }
-        public virtual void Effect(Child c)
+        public virtual void Effect(Child c, MasterGameControl controller)
         {
 
         }

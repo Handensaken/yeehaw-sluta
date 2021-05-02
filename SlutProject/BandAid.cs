@@ -6,12 +6,12 @@ namespace SlutProject
     {
         public BandAid()
         {
-            Name = "Band Aid";
+            /*Name = "Band Aid";
             Cost = 10;
-            Usable = true;
+            Usable = true;*/
         }
         private int recovery = 4;
-        public override void Effect(Child c)
+        public override void Effect(Child c, MasterGameControl controller)
         {
             c.Recover(recovery);
         }

@@ -8,25 +8,32 @@ namespace SlutProject
     public class Child
     {
         MasterGameControl controller;
-        Random rand = new Random();
+        protected Random rand = new Random();
         public string Name { get; private set; }
         public int HP { get; protected set; }
 
-        protected int maxHP;
+        protected float maxHP;
         public float Energy { get; set; }
         public float XpMultiplier { get; protected set; }
         public int Level { get; private set; }
         public int Xp { get; private set; }
         public float XpThreshold { get; private set; }
         public string Alignment { get; protected set; }
-        public Child(MasterGameControl c)
+        public bool IsWild { get; set; }
+        public Child(MasterGameControl c, bool wild)
         {
             controller = c;
             Level = 1;
             Name = File.ReadAllLines(@"names.txt")[rand.Next(308)];
             XpThreshold = 10;
+            IsWild = wild;
+            Energy = 10; //make super drain energy should be ezpz
         }
-        public virtual int SuperAttack()
+        public virtual void SuperAttack(Child oC, Player p, Child self)
+        {
+
+        }
+        public virtual int Attack()
         {
             return 0;
         }
@@ -36,11 +43,17 @@ namespace SlutProject
             System.Console.WriteLine($"{Name} earned {xpValue} experience!");
             if (Xp >= XpThreshold)
             {
-                System.Console.WriteLine($"{Name} leveled up!");
-                Level += 1;
-                Xp = 0;
-                XpThreshold *= 1.5f;
+                LevelUpEvent();
             }
+        }
+        private void LevelUpEvent()
+        {
+            System.Console.WriteLine($"{Name} leveled up!");
+            Level += 1;
+            Xp = 0;
+            XpThreshold *= 1.5f;
+            Energy = 10;
+            maxHP *= 1.2f;
         }
         public void Punishment()
         {
@@ -51,7 +64,14 @@ namespace SlutProject
         public void Hurt(int hurtValue)
         {
             HP -= hurtValue;
-            System.Console.WriteLine($"{Name} took {hurtValue} damage! It now has {HP} health left.");
+            if (IsWild)
+            {
+                System.Console.WriteLine($"opposing {Name} took {hurtValue} damage! It now has {HP} health left.");
+            }
+            else
+            {
+                System.Console.WriteLine($"your {Name} took {hurtValue} damage! It now has {HP} health left.");
+            }
             if (HP <= 0)
             {
                 controller.ChildDeathEvent(this);
@@ -60,8 +80,9 @@ namespace SlutProject
         public void Recover(int recoverAmount)
         {
             HP += recoverAmount;
-            if (HP > maxHP) { HP = maxHP; }
-            System.Console.WriteLine($"healed {Name} for {recoverAmount} HP");
+            if (HP > maxHP) { HP = (int)maxHP; }
+            System.Console.WriteLine($"Healed {Name} for {recoverAmount} HP");
         }
+        
     }
 }
