@@ -225,6 +225,7 @@ namespace SlutProject
             System.Console.WriteLine("Please keep your children on a leash or inside their cage at all times!");
             System.Console.WriteLine("If your children are suffering severe damage you can buy band aids at the store.");
             System.Console.WriteLine("Unjustified child attacks are not tolerated and the aggressor will be put down!");
+            System.Console.WriteLine("This room is connected at either side to a battle room and a shop room. To go from one to the other you must pass through this room.");
             Key.Press();
             TempName(Room.rooms["Start"]);
         }

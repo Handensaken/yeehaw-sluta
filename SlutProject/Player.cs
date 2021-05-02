@@ -37,9 +37,9 @@ namespace SlutProject
         }
         public void ChooseStarter(ChildSpawner spawner)
         {
-            System.Console.WriteLine("Before  you can begin your adventure of weaponizing young children for your own profit and entertainment, you must choose a starting child.");
-            System.Console.WriteLine("You will be presented with 3 choices. Press enter to continue");
-            Console.ReadLine();
+            System.Console.WriteLine("Before you can begin your adventure of weaponizing young children for your own profit and entertainment, you must choose a starting child.");
+            System.Console.WriteLine("You will be presented with 3 choices.");
+            Key.Press();
             Child[] starterChildren = new Child[3];
             string[] choices = new string[3];
             for (int i = 0; i < starterChildren.Length; i++)
@@ -69,7 +69,7 @@ namespace SlutProject
         }
         public void DecideChoice()
         {
-            switch (Selection(possibleChoices.ToArray(), $"Choose action (current room: {currentRoom.Name}", true).ReturnInt)
+            switch (Selection(possibleChoices.ToArray(), $"Choose action (current room: {currentRoom.Name})", true).ReturnInt)
             {
                 case 0:
                     {
