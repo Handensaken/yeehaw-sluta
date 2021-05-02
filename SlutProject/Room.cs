@@ -6,6 +6,7 @@ namespace SlutProject
     public class Room
     {
         protected string[] Actions;
+        public string Name { get; protected set; }
         public static Dictionary<string, Room> rooms { get; private set; } = new Dictionary<string, Room>();
         protected List<string> choices = new List<string>();
         public static void InitializeRooms()
@@ -18,7 +19,8 @@ namespace SlutProject
         {
             return choices.ToArray();
         }
-        public virtual string[] GetActions(){
+        public virtual string[] GetActions()
+        {
             return Actions;
         }
     }

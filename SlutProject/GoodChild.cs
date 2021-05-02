@@ -26,7 +26,6 @@ namespace SlutProject
             {
                 System.Console.WriteLine($"your {Name} drop kicked the opposing {oC.Name}");
             }
-            Console.ReadKey();
             oC.Hurt(returningValue);
             Energy--;
         }

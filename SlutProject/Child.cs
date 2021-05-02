@@ -66,12 +66,13 @@ namespace SlutProject
             HP -= hurtValue;
             if (IsWild)
             {
-                System.Console.WriteLine($"opposing {Name} took {hurtValue} damage! It now has {HP} health left.");
+                System.Console.WriteLine($"Opposing {Name} took {hurtValue} damage! It now has {HP} health left.");
             }
             else
             {
-                System.Console.WriteLine($"your {Name} took {hurtValue} damage! It now has {HP} health left.");
+                System.Console.WriteLine($"Your {Name} took {hurtValue} damage! It now has {HP} health left.");
             }
+            Key.Press();
             if (HP <= 0)
             {
                 controller.ChildDeathEvent(this);

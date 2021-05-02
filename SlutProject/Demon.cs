@@ -25,7 +25,6 @@ namespace SlutProject
                 System.Console.WriteLine($"your {Name} flung feces at the opposing {oC.Name}, damaging their soul!");
 
             }
-            Console.ReadKey();
             oC.Hurt((int)damage);
             Energy--;
         }

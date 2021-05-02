@@ -7,8 +7,8 @@ namespace SlutProject
         public BandAid()
         {
             /*Name = "Band Aid";
-            Cost = 10;
             Usable = true;*/
+            Cost = 10;
         }
         private int recovery = 4;
         public override void Effect(Child c, MasterGameControl controller)

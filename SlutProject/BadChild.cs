@@ -20,7 +20,6 @@ namespace SlutProject
             else{
                 System.Console.WriteLine($"your {Name} bit their opponent");
             }
-            Console.ReadKey();
             oC.Hurt(rand.Next(8, 33));
             Energy--;
         }

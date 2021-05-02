@@ -4,6 +4,9 @@ namespace SlutProject
 {
     public class Net : Item
     {
+        public Net(){
+            Cost = 20;
+        }
         public override void Effect(Child c, MasterGameControl controller)
         {
 

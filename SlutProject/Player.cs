@@ -69,7 +69,7 @@ namespace SlutProject
         }
         public void DecideChoice()
         {
-            switch (Selection(possibleChoices.ToArray(), "Choose action", true).ReturnInt)
+            switch (Selection(possibleChoices.ToArray(), $"Choose action (current room: {currentRoom.Name}", true).ReturnInt)
             {
                 case 0:
                     {
@@ -113,7 +113,7 @@ namespace SlutProject
             System.Console.WriteLine($"Level: {displayChild.Level}");
             System.Console.WriteLine($"XP: {displayChild.Xp}/{displayChild.XpThreshold}");
             System.Console.WriteLine($"Child is {displayChild.Alignment}");
-            Console.ReadKey();
+            Key.Press();
 
         }
         public void SetInventoryItems()
@@ -185,20 +185,21 @@ namespace SlutProject
                     case 1:
                         {
                             SetInventoryItems();
-                            break;
+                            return;
                         }
                 }
             }
             else
             {
-                System.Console.WriteLine("not avaliable");
+                System.Console.WriteLine("You do not possess this item");
                 if (InBattle)
                 {
-                    Console.ReadKey();
+                    Key.Press();
                     controller.BattleSelection();
+                    return;
                 }
+                Key.Press();
             }
-            Console.ReadKey();
         }
         public Child SelectChild(bool optional)
         {
@@ -211,7 +212,7 @@ namespace SlutProject
             {
                 possibleChoices.Add("back");
             }
-            int index = Selection(possibleChoices.ToArray(), "Select a child", true).ReturnInt;
+            int index = Selection(possibleChoices.ToArray(), $"Select a child (current active is {activeChild.Name}", true).ReturnInt;
             if (index == Children.Count)
             {
                 if (InBattle)

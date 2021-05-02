@@ -28,7 +28,6 @@ namespace SlutProject
                 System.Console.WriteLine($"your {Name} healed their party for {10 * Level} HP");
             }
             Energy--;
-            Console.ReadKey();
         }
         public override int Attack()
         {

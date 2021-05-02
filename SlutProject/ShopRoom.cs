@@ -4,7 +4,11 @@ namespace SlutProject
 {
     public class ShopRoom : Room
     {
-         public override string[] GetChoices()
+        public ShopRoom()
+        {
+            Name = "Shop Room";
+        }
+        public override string[] GetChoices()
         {
             choices.Clear();
             choices.Add("Start");
@@ -19,7 +23,7 @@ namespace SlutProject
             };
             return Actions;
         }
-        
+
 
     }
 }

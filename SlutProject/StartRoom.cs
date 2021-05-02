@@ -4,7 +4,9 @@ namespace SlutProject
 {
     public class StartRoom : Room
     {
-        
+        public StartRoom(){
+            Name = "Start Room";
+        }
         public override string[] GetChoices()
         {
             choices.Clear();

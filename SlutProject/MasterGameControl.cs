@@ -19,6 +19,7 @@ namespace SlutProject
             {
                 System.Console.WriteLine($"{c.Name} has suffered great damage and succumbed to their grim injuries.");
                 player.Children.Remove(c);
+                Key.Press();
                 if (player.InBattle && player.Children.Count == 0)
                 {
                     player.InBattle = false;
@@ -26,7 +27,7 @@ namespace SlutProject
                 }
                 else
                 {
-                    playerActiveChild = player.SelectChild(false);
+                    SwitchChild(false);
                 }
             }
             else
@@ -36,6 +37,7 @@ namespace SlutProject
                 player.InBattle = false;
                 player.ModifyBalance(10);
                 System.Console.WriteLine("gained 10 moneys");
+                Key.Press();
             }
         }
 
@@ -46,13 +48,13 @@ namespace SlutProject
                 Child target = player.SelectChild(true);
                 if (target == null) { return; }
                 target.Punishment();
-                Console.ReadKey();
+                Key.Press();
             }
             else
             {
                 System.Console.WriteLine("You have no children left.");
                 System.Console.WriteLine("press any key to continue");
-                Console.ReadKey();
+                Key.Press();
             }
         }
         public void TempName(Room current)
@@ -74,7 +76,7 @@ namespace SlutProject
                         else if (current == Room.rooms["Battle"])
                         {
                             StartBattle();
-                            Console.ReadKey();
+                            Key.Press();
                         }
                         else
                         {
@@ -98,7 +100,7 @@ namespace SlutProject
                 player.InBattle = true;
                 Child opponentChild = spawner.Spawner(this, true);
                 System.Console.WriteLine($"Engaged Level {opponentChild.Level} {opponentChild.Name} in battle");
-                Console.ReadKey();
+                Key.Press();
                 BattleSession(opponentChild);
             }
             else
@@ -120,8 +122,8 @@ namespace SlutProject
                     OpponentsTurn(opponent, playerActiveChild);
                 }
             }
-            System.Console.WriteLine("Battle ended");
-            Console.ReadKey();
+            //  System.Console.WriteLine("Battle ended");
+            //  Key.Press();
             TempName(Room.rooms["Battle"]);
         }
         public void BattleSelection()
@@ -137,7 +139,6 @@ namespace SlutProject
                 case 0:
                     {
                         Attack();
-                        Console.ReadKey();
                         break;
                     }
                 case 1:
@@ -148,20 +149,20 @@ namespace SlutProject
                     }
                 case 2:
                     {
-                        SwitchChild();
+                        SwitchChild(true);
                         break;
                     }
                 case 3:
                     {
                         Run();
-                        Console.ReadKey();
+                        Key.Press();
                         break;
                     }
             }
         }
-        private void SwitchChild()
+        private void SwitchChild(bool optional)
         {
-            Child pendingChild = player.SelectChild(true);
+            Child pendingChild = player.SelectChild(optional);
             if (playerActiveChild == pendingChild)
             {
                 BattleSelection();
@@ -169,6 +170,7 @@ namespace SlutProject
             else
             {
                 playerActiveChild = pendingChild;
+                System.Console.WriteLine($"Sent in {playerActiveChild.Name}!");
                 BattleSelection();
             }
 
@@ -210,12 +212,11 @@ namespace SlutProject
             if (rand.Next(2) == 1 && oC.Energy > 0)
             {
                 oC.SuperAttack(aC, player, oppChild);
-                Console.ReadKey();
+                Key.Press();
             }
             else
             {
                 aC.Hurt(oC.Attack());
-                Console.ReadKey();
             }
         }
         private void InfoBoard()
@@ -224,12 +225,20 @@ namespace SlutProject
             System.Console.WriteLine("Please keep your children on a leash or inside their cage at all times!");
             System.Console.WriteLine("If your children are suffering severe damage you can buy band aids at the store.");
             System.Console.WriteLine("Unjustified child attacks are not tolerated and the aggressor will be put down!");
-            Console.ReadKey();
+            Key.Press();
             TempName(Room.rooms["Start"]);
         }
+
+        private string[] getNewItemNames(){ //This is very very very ugly and bad, but time is of the essence and I can not be fucked because it works
+            string[] newItemNames = Item.availableItems;
+            newItemNames[0] += " $10";
+            newItemNames[1] += " $20";
+            return newItemNames;
+        }
+
         private void Shop(Room current)
         {
-            switch (player.Selection(Item.availableItems, "Choose item", true).ReturnInt)
+            switch (player.Selection(getNewItemNames(), $"Choose item (Cash: {player.Cash})", true).ReturnInt)
             {
                 case 0:
                     {
@@ -241,12 +250,12 @@ namespace SlutProject
 
                             player.RemoveCash(10);
                             System.Console.WriteLine("Bought a band aid");
-                            Console.ReadKey();
+                            Key.Press();
                         }
                         else
                         {
                             System.Console.WriteLine("Insufficient cash");
-                            Console.ReadKey();
+                            Key.Press();
                             TempName(Room.rooms["Shop"]);
                         }
                         break;
@@ -259,12 +268,12 @@ namespace SlutProject
                             player.inv["Net"] += 1;
                             player.RemoveCash(20);
                             System.Console.WriteLine("Bought a net");
-                            Console.ReadKey();
+                            Key.Press();
                         }
                         else
                         {
                             System.Console.WriteLine("Insufficient cash");
-                            Console.ReadKey();
+                            Key.Press();
                             TempName(Room.rooms["Shop"]);
                         }
                         break;
@@ -281,21 +290,21 @@ namespace SlutProject
             string tempString = player.Selection(currentRoom.GetChoices().ToArray(), "Select a room", false).ReturnString;
             if (tempString == "Stay")
             {
-                System.Console.WriteLine($"Stayed in {tempString}");
-                Console.ReadKey();
+                System.Console.WriteLine($"Stayed");
+                Key.Press();
                 return currentRoom;
             }
             else
             {
-                System.Console.WriteLine($"entered {tempString}");
-                Console.ReadKey();
+                System.Console.WriteLine($"entered {Room.rooms[tempString].Name}");
+                Key.Press();
                 return Room.rooms[tempString];
             }
         }
         public void Catch(Child target)
         {
             System.Console.WriteLine("Threw net");
-            Console.ReadKey();
+            Key.Press();
             Random rand = new Random();
             if (rand.Next(6, 7) == 6)
             {
@@ -308,7 +317,7 @@ namespace SlutProject
             {
                 System.Console.WriteLine($"You missed {target.Name} with the net");
             }
-            Console.ReadKey();
+            Key.Press();
         }
     }
 }

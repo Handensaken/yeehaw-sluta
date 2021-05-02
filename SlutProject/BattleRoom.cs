@@ -4,7 +4,11 @@ namespace SlutProject
 {
     public class BattleRoom : Room
     {
-         public override string[] GetChoices()
+        public BattleRoom()
+        {
+            Name = "Battle Room";
+        }
+        public override string[] GetChoices()
         {
             choices.Clear();
             choices.Add("Start");

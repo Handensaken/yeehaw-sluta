@@ -18,7 +18,6 @@ namespace SlutProject
             while (true)
             {
                 player.AddInitialChoices();
-               // Console.ReadKey();
             }
         }
         static void Instructions()
