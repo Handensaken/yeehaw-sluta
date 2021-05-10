@@ -2,7 +2,7 @@ using System;
 
 namespace SlutProject
 {
-    public class Demon : BadChild
+    public class Demon : BadChild //this one does not need to be a child of GoodChild and would work perfectly as a child of Child but this opens up the possibility of making the class more advanced. It also looks more structured
     {
         public Demon(MasterGameControl c, bool wild) : base(c, wild)
         {

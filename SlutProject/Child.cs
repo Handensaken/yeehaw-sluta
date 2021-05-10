@@ -7,7 +7,7 @@ namespace SlutProject
 {
     public class Child
     {
-        MasterGameControl controller;
+        private MasterGameControl controller;
         protected Random rand = new Random();
         public string Name { get; private set; }
         public int HP { get; protected set; }
