@@ -20,24 +20,26 @@ namespace SlutProject
         public float XpThreshold { get; private set; }
         public string Alignment { get; protected set; }
         public bool IsWild { get; set; }
-        public Child(MasterGameControl c, bool wild)
+        //^^ sets up a whole bunch of variables
+        public Child(MasterGameControl c, bool wild)    //sets up the child
         {
             controller = c;
             Level = 1;
-            Name = File.ReadAllLines(@"names.txt")[rand.Next(308)];
+            //^^ this is just simple variable setting
+            Name = File.ReadAllLines(@"names.txt")[rand.Next(308)]; //this one uses the IO lib to get a string array from a text file and then assign the name to a random line in said text file
             XpThreshold = 10;
             IsWild = wild;
-            Energy = 10; //make super drain energy should be ezpz
+            Energy = 10; //and the remaining things are also variable setting
         }
-        public virtual void SuperAttack(Child oC, Player p, Child self)
+        public virtual void SuperAttack(Child oC, Player p, Child self)     
         {
-
+            //Sets up the super attack method to give each subclass their own super attack
         }
         public virtual int Attack()
         {
-            return 0;
+            return 0;   //sets up attack method so the different subclasses can have unique attacks
         }
-        public void AddXP(int xpValue)
+        public void AddXP(int xpValue)      //woohoo give xp
         {
             Xp += (int)Math.Round(xpValue * XpMultiplier);
             System.Console.WriteLine($"{Name} earned {xpValue} experience!");
@@ -46,7 +48,7 @@ namespace SlutProject
                 LevelUpEvent();
             }
         }
-        private void LevelUpEvent()
+        private void LevelUpEvent() //woohooo level up
         {
             System.Console.WriteLine($"{Name} leveled up!");
             Level += 1;
@@ -55,13 +57,13 @@ namespace SlutProject
             Energy = 10;
             maxHP *= 1.2f;
         }
-        public void Punishment()
+        public void Punishment()    //this one is for punishing children >:) damages them but gives them xp. 
         {
             System.Console.WriteLine($"You punished {Name}. They cried but maybe they learnt a lesson!");
             AddXP(rand.Next(3) + 1);
             Hurt(rand.Next(2) + 1);
         }
-        public void Hurt(int hurtValue)
+        public void Hurt(int hurtValue) //Hurts the child and kills it if their hp reaches 0
         {
             HP -= hurtValue;
             if (IsWild)
@@ -78,7 +80,7 @@ namespace SlutProject
                 controller.ChildDeathEvent(this);
             }
         }
-        public void Recover(int recoverAmount)
+        public void Recover(int recoverAmount)  //heals the child for a specified amount
         {
             HP += recoverAmount;
             if (HP > maxHP) { HP = (int)maxHP; }

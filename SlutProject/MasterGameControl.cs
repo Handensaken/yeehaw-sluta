@@ -9,13 +9,14 @@ namespace SlutProject
     {
         ChildSpawner spawner = new ChildSpawner();
         Player player;
+        //sets up variables
         public MasterGameControl(Player p)
         {
-            player = p;
+            player = p;     //constructor gets the player class
         }
-        public void ChildDeathEvent(Child c)
+        public void ChildDeathEvent(Child c)    //This one actually handles the death of children
         {
-            if (!c.IsWild)
+            if (!c.IsWild)  //if they're your children it removes dead children from your list and exits battle if you have run out of kids 
             {
                 System.Console.WriteLine($"{c.Name} has suffered great damage and succumbed to their grim injuries.");
                 player.Children.Remove(c);
@@ -25,23 +26,27 @@ namespace SlutProject
                     player.InBattle = false;
                     System.Console.WriteLine($"All your children are dead");
                 }
-                else
+                else    //if they die and you're in battle you have to switch child
                 {
                     SwitchChild(false);
                 }
             }
-            else
+            else    //if the dying child is an enemy you get money and xp. you are also not in battle anymore :=)
             {
                 System.Console.WriteLine($"The opposing {c.Name} has been brutally slain");
                 System.Console.WriteLine("You won the battle");
                 player.InBattle = false;
                 player.ModifyBalance(10);
+                foreach (Child child in player.Children)
+                {
+                    child.AddXP(5);
+                }
                 System.Console.WriteLine("gained 10 moneys");
                 Key.Press();
             }
         }
 
-        public void PunishChildren()
+        public void PunishChildren()    //runs the punishment method on the specifid target
         {
             if (player.Children.Count > 0)
             {
@@ -57,10 +62,10 @@ namespace SlutProject
                 Key.Press();
             }
         }
-        public void TempName(Room current)
+        public void TempName(Room current)  //I can't be fucked to change the name :) too bad
         {
-            switch (player.Selection(current.GetActions(), "Select an Action", true).ReturnInt)
-            {
+            switch (player.Selection(current.GetActions(), "Select an Action", true).ReturnInt) 
+            {   //lets you choose room specific action or go back
                 case 0:
                     {
 
@@ -92,7 +97,7 @@ namespace SlutProject
                     }
             }
         }
-        private void StartBattle()
+        private void StartBattle()  //sets up everything in preparation for the battle
         {
             if (player.Children.Count > 0)
             {
@@ -103,14 +108,14 @@ namespace SlutProject
                 Key.Press();
                 BattleSession(opponentChild);
             }
-            else
+            else    //If you have no children you are yoted back
             {
                 TempName(Room.rooms["Battle"]);
             }
         }
         public Child oppChild { get; private set; }
         private Child playerActiveChild;
-        private void BattleSession(Child opponent)
+        private void BattleSession(Child opponent)  //Handles all the running of the battle sequence
         {
             playerActiveChild = player.Children[0];
             oppChild = opponent;
@@ -124,18 +129,18 @@ namespace SlutProject
             }
             //  System.Console.WriteLine("Battle ended");
             //  Key.Press();
-            TempName(Room.rooms["Battle"]);
+            TempName(Room.rooms["Battle"]); //returns us to the action selection screen if the battle ends
         }
-        public void BattleSelection()
+        public void BattleSelection() //Handles selection of everything battle related
         {
-            string[] battleActions = {
+            string[] battleActions = {  //Sets the choices in battle
                 "Attack",
                 "Inventory",
                 "Children",
                 "Run"
             };
             switch (player.Selection(battleActions, $"Select Action (Your {playerActiveChild.Name}'s HP: {playerActiveChild.HP}. Opposing {oppChild.Name}'s HP: {oppChild.HP})", true).ReturnInt)
-            {
+            {   //lets the player select an action and calls the appropriate method
                 case 0:
                     {
                         Attack();
@@ -149,7 +154,7 @@ namespace SlutProject
                     }
                 case 2:
                     {
-                        SwitchChild(true);
+                        SwitchChild(true);  //true here defines that the switch is optional
                         break;
                     }
                 case 3:
@@ -160,14 +165,14 @@ namespace SlutProject
                     }
             }
         }
-        private void SwitchChild(bool optional)
+        private void SwitchChild(bool optional)//Gets the new active child by calling the select child method
         {
             Child pendingChild = player.SelectChild(optional);
-            if (playerActiveChild == pendingChild)
+            if (playerActiveChild == pendingChild)  //If the selected one is the one already active the payer is just sent back to the selection screen
             {
                 BattleSelection();
             }
-            else
+            else    //Otherwise it switches the new child in
             {
                 playerActiveChild = pendingChild;
                 System.Console.WriteLine($"Sent in {playerActiveChild.Name}!");
@@ -175,11 +180,11 @@ namespace SlutProject
             }
 
         }
-        private void Attack()
+        private void Attack()   //lets the player decide between a normal attack and a super attack or to go back to selection
         {
             string[] attackChoices = { "Attack", "Super Attack", "Go Back" };
             switch (player.Selection(attackChoices, $"Select move (Your {playerActiveChild.Name}'s HP: {playerActiveChild.HP}. Opposing {oppChild.Name}'s HP: {oppChild.HP})", true).ReturnInt)
-            {
+            {   //The opposing child's hurt method is called with the paramater of the active child's corresponding attack method
                 case 0:
                     {
                         oppChild.Hurt(playerActiveChild.Attack());
@@ -201,12 +206,12 @@ namespace SlutProject
             }
 
         }
-        private void Run()
+        private void Run()  //Ends battle
         {
             System.Console.WriteLine("Ran away");
             player.InBattle = false;
         }
-        private void OpponentsTurn(Child oC, Child aC)
+        private void OpponentsTurn(Child oC, Child aC)  //Randomizes the opponent's move.
         {
             Random rand = new Random();
             if (rand.Next(2) == 1 && oC.Energy > 0)
@@ -219,7 +224,7 @@ namespace SlutProject
                 aC.Hurt(oC.Attack());
             }
         }
-        private void InfoBoard()
+        private void InfoBoard()    //Prints some info
         {
             System.Console.WriteLine("[INFO BOARD]");
             System.Console.WriteLine("Please keep your children on a leash or inside their cage at all times!");
@@ -235,12 +240,13 @@ namespace SlutProject
             newItemNames[0] += " $10";
             newItemNames[1] += " $20";
             return newItemNames;
+            //This is extremely lazy coding but we set the names of the items we are interested in
         }
 
-        private void Shop(Room current)
+        private void Shop(Room current) //lets the player choose an item from the shop and then buy it, if the can afford it.
         {
             switch (player.Selection(getNewItemNames(), $"Choose item (Cash: {player.Cash})", true).ReturnInt)
-            {
+            {   //calls the selection
                 case 0:
                     {
                         if (player.CheckBalance(10))    //this is very bad and lazy coding. Too bad :)
@@ -249,9 +255,10 @@ namespace SlutProject
 
                             player.inv["Band Aid"] += 1;
 
-                            player.RemoveCash(10);
+                            player.ModifyBalance(-10);
                             System.Console.WriteLine("Bought a band aid");
                             Key.Press();
+                            //This adds a band aid and removes cash. 
                         }
                         else
                         {
@@ -262,12 +269,12 @@ namespace SlutProject
                         break;
                     }
                 case 1:
-                    {
+                    {   //this one does the same thing but for the net
                         if (player.CheckBalance(20))
                         {
 
                             player.inv["Net"] += 1;
-                            player.RemoveCash(20);
+                            player.ModifyBalance(-20);
                             System.Console.WriteLine("Bought a net");
                             Key.Press();
                         }
@@ -276,17 +283,17 @@ namespace SlutProject
                             System.Console.WriteLine("Insufficient cash");
                             Key.Press();
                             TempName(Room.rooms["Shop"]);
-                        }
+                        }   //The item system should be class based but I needed more time to make them work neatly so i used a simpler ang uglier method
                         break;
                     }
                 case 2:
-                    {
+                    {   //This one returns us to the selection screen
                         TempName(Room.rooms["Shop"]); //this is not pretty either.
                         break;
                     }
             }
         }
-        public Room GetRoom(Room currentRoom)
+        public Room GetRoom(Room currentRoom)   //lets the player move to another room, or stay if they so desire
         {
             string tempString = player.Selection(currentRoom.GetChoices().ToArray(), "Select a room", false).ReturnString;
             if (tempString == "Stay")
@@ -302,7 +309,7 @@ namespace SlutProject
                 return Room.rooms[tempString];
             }
         }
-        public void Catch(Child target)
+        public void Catch(Child target) //tries to catch the target child
         {
             System.Console.WriteLine("Threw net");
             Key.Press();

@@ -6,7 +6,7 @@ namespace SlutProject
     class Program
     {
 
-        static void Main(string[] args)
+        static void Main(string[] args) //this just sets up the bare necessities for the game and then lets it run in other methods somewhere fare beyond the horizon
         {
             Room.InitializeRooms();
             Player player = new Player();
@@ -20,7 +20,7 @@ namespace SlutProject
                 player.AddInitialChoices();
             }
         }
-        static void Instructions(Player player)
+        static void Instructions(Player player)     //gives the player their inital instructions and a small tutorial
         {
             System.Console.WriteLine("In this game you will navigate entirely by selecting an option presented in the form of a multi-choice page.");
             System.Console.WriteLine("To navigate this page you may use the up and down arrows on your keyboard. With enter you select the currently hovered option. Any other keys will do nothing.");

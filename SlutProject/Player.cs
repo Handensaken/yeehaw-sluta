@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace SlutProject
 {
-    public class Player
+    public class Player //The purpose of this class is to handle everything related to the player
     {
 
         MasterGameControl controller;
@@ -20,9 +20,11 @@ namespace SlutProject
 
         private Child activeChild;
 
-        public bool InBattle { get; set; }  //this shouldn't be public but I can't manage another reasonable way
+        //^^These are all just some variables
 
-        public Player()
+        public bool InBattle { get; set; }  //this shouldn't be public but I can't manage another reasonable way. It could be done with manual properties but then what is the point
+
+        public Player() //We run the constructor to initiate the player with an empty inventory and some money
         {
             Inventory.Clear();
             Cash = 30;
@@ -31,11 +33,11 @@ namespace SlutProject
                 inv.Add(Item.availableItems[i], 0);
             }
         }
-        public void GetController(MasterGameControl control)
+        public void GetController(MasterGameControl control) // a simple controller getter
         {
             controller = control;
         }
-        public void ChooseStarter(ChildSpawner spawner)
+        public void ChooseStarter(ChildSpawner spawner) //This method lets the player choose between 3 children and then adds them to the player's children
         {
             System.Console.WriteLine("Before you can begin your adventure of weaponizing young children for your own profit and entertainment, you must choose a starting child.");
             System.Console.WriteLine("You will be presented with 3 choices.");
@@ -52,11 +54,11 @@ namespace SlutProject
             activeChild = Children[Children.Count - 1];
             System.Console.WriteLine($"you chose {Children[Children.Count - 1].Name}. It is level {Children[Children.Count - 1].Level} and is {Children[Children.Count - 1].Alignment}");
         }
-        public void ModifyBalance(int modifier)
+        public void ModifyBalance(int modifier)     //we just edit the balance (haha balance I fall dowwwn)
         {
             Cash += modifier;
         }
-        public void AddInitialChoices()
+        public void AddInitialChoices()     //woah now shit happens. We add some choices. These are the base choices before anything is selected and acts as main choices
         {
             possibleChoices.Clear();
             possibleChoices.Add("Children");
@@ -67,7 +69,7 @@ namespace SlutProject
             possibleChoices.Add("Exit game");
             DecideChoice();
         }
-        public void DecideChoice()
+        public void DecideChoice()  //Here we simply handle the decision through a selection algorithm haha i am broken
         {
             switch (Selection(possibleChoices.ToArray(), $"Choose action (current room: {currentRoom.Name})", true).ReturnInt)
             {
@@ -103,11 +105,11 @@ namespace SlutProject
                     }
             }
         }
-        private void DisplayChildStats()
+        private void DisplayChildStats() //Displays a certain child's stats
         {
-            Child displayChild = SelectChild(true);
+            Child displayChild = SelectChild(true); //gets child with the select child method
 
-            if (displayChild == null) { return; }
+            if (displayChild == null) { return; }   //Because the code runs linearly, some code is not run immedately and runs twice the next time it is run. I do not know why but this bs fixes it
             System.Console.WriteLine($"Name: {displayChild.Name}");
             System.Console.WriteLine($"HP: {displayChild.HP}");
             System.Console.WriteLine($"Level: {displayChild.Level}");
@@ -116,7 +118,7 @@ namespace SlutProject
             Key.Press();
 
         }
-        public void SetInventoryItems()
+        public void SetInventoryItems() //Gets the inventory items and prepares them for selection
         {
             possibleChoices.Clear();
 
@@ -125,13 +127,13 @@ namespace SlutProject
             {
                 possibleChoices.Add(s);
             }
-            possibleChoices.RemoveAt(inv.Count - 1);
+            possibleChoices.RemoveAt(inv.Count - 1);    //removes annoying part that I should be able to fix pretty easily but I am lazy
             possibleChoices.Add("Back");
 
 
             SelectItem();
         }
-        private void SelectItem()
+        private void SelectItem()   //Handles the selection process for selecting an inventory item
         {
             string objectReference = Selection(possibleChoices.ToArray(), "Choose Item", false).ReturnString;
             if (objectReference == "Back")
@@ -145,7 +147,7 @@ namespace SlutProject
                     controller.BattleSelection();
                 }
             }
-            else if (inv[objectReference] > 0)
+            else if (inv[objectReference] > 0)  //This checks if the player in fact possesses the requested item
             {
                 System.Console.WriteLine("item is avaliable");
 
@@ -154,7 +156,7 @@ namespace SlutProject
                 possibleChoices.Add("No");
                 switch (Selection(possibleChoices.ToArray(), "Are you sure?", true).ReturnInt)
                 {
-                    case 0: //This is not very efficient code but it works. Unfortunate :)
+                    case 0: //This is not very efficient code but it works. Unfortunate bitchass :)
                         {
                             if (objectReference == "Band Aid")
                             {
@@ -164,7 +166,7 @@ namespace SlutProject
                             }
                             else if (objectReference == "Net")
                             {
-                                //Only make usable in battle
+                                //makes usable only in battle
                                 if (InBattle)
                                 {
                                     inv[objectReference]--;
@@ -176,20 +178,20 @@ namespace SlutProject
                                     System.Console.WriteLine("This item cannot be used in this state");
                                 }
                             }
-                            else
+                            else    //This runs only if something is wrong and the player selected something that doesn't exist
                             {
                                 System.Console.WriteLine("woah shits fucked");
                             }
                             break;
                         }
-                    case 1:
+                    case 1: //This returns the player to the item selection screen
                         {
                             SetInventoryItems();
                             return;
                         }
                 }
             }
-            else
+            else    //This runs if the player does not have the item. theif fucker try use item not have >:(
             {
                 System.Console.WriteLine("You do not possess this item");
                 if (InBattle)
@@ -201,19 +203,19 @@ namespace SlutProject
                 Key.Press();
             }
         }
-        public Child SelectChild(bool optional)
+        public Child SelectChild(bool optional) //This method lets the player select one of their children and returns that child for use wherever needed. When called you specify if its optional or not
         {
             possibleChoices.Clear();
             for (int i = 0; i < Children.Count; i++)
             {
                 possibleChoices.Add(Children[i].Name);
             }
-            if (optional)
+            if (optional)   //It's only not optional when your child dies in battle
             {
                 possibleChoices.Add("back");
             }
             int index = Selection(possibleChoices.ToArray(), $"Select a child (current active is {activeChild.Name}", true).ReturnInt;
-            if (index == Children.Count)
+            if (index == Children.Count)   // this lets the player choose not to select a child as long as it's optional. if not it simply returns the chosen child
             {
                 if (InBattle)
                 {
@@ -223,14 +225,14 @@ namespace SlutProject
                 {
                     AddInitialChoices();
                 }
-                return null;
+                return null;    //again, returns null because sometimes code becomes majorly wacko wacko
             }
             else
             {
-                return Children[index];
+                return Children[index]; //Gives child
             }
         }
-        private void Exit()
+        private void Exit()     //A simple method that asks the player if they want to quit the game and if so quits the game
         {
             possibleChoices.Clear();
             possibleChoices.Add("Yes");
@@ -239,7 +241,7 @@ namespace SlutProject
             {
                 case 0:
                     {
-                        Environment.Exit(1);
+                        Environment.Exit(1);    //AAANND WE OUT
                         break;
                     }
                 case 1:
@@ -249,7 +251,7 @@ namespace SlutProject
                     }
             }
         }
-        public bool CheckBalance(int value)
+        public bool CheckBalance(int value) //Checks if the player can afford something
         {
             if (Cash >= value)
             {
@@ -261,13 +263,8 @@ namespace SlutProject
             }
         }
 
-        public void RemoveCash(int value)
-        {
-            Cash -= value;
-        }
-
-        //you know the usual shebang
-        public void PrintChoices(string[] choices, int current, string q)
+        //you know the usual shebang but with a litte twist ;)
+        public void PrintChoices(string[] choices, int current, string q)   //The only difference here is that we print the question or instructions
         {
             System.Console.WriteLine(q);
             for (int i = 0; i < choices.Length; i++)
@@ -282,7 +279,7 @@ namespace SlutProject
                 }
             }
         }
-        public Key Selection(string[] choices, string q, bool SoI)
+        public Key Selection(string[] choices, string q, bool SoI)  //This one is exciting. Here we use the Key class rather than an int or a string
         {
             int current = 0;
             while (true)
@@ -308,10 +305,10 @@ namespace SlutProject
                             }
                         }
                         break;
-                    case ConsoleKey.Enter:
+                    case ConsoleKey.Enter: //All of the above is still the same shebang but here's some new stuff
                         {
                             Key returningKey = new Key();
-                            if (SoI)
+                            if (SoI)    //We use a bool that specifies if the requested variable is supposed to be an int or a string. This could be changed to something else than a bool to accomedate multiple return types
                             {
                                 returningKey.ReturnInt = current;
                             }
@@ -319,11 +316,12 @@ namespace SlutProject
                             {
                                 returningKey.ReturnString = choices[current];
                             }
+                            //Then we assign a value to either the int or the string variable of Key.
                             return returningKey;
                         }
                     default:
                         {
-                            // handle everything else
+                            // If the going gets tough the tough gets going
                         }
                         break;
                 }

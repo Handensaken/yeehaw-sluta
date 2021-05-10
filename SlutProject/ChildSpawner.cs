@@ -5,7 +5,7 @@ namespace SlutProject
 {
     public class ChildSpawner
     {
-        public Child Spawner(MasterGameControl controller, bool wild)
+        public Child Spawner(MasterGameControl controller, bool wild)   //spawns a child and randomizes if they are good or bad. then randomizes 1/100 if they are either a demon or a hero.
         {
             Random rand = new Random();
             switch (rand.Next(2))

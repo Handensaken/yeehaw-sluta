@@ -1,13 +1,13 @@
 using System;
-
+using System.Reflection;
 namespace SlutProject
 {
     public class StartRoom : Room
     {
         public StartRoom(){
-            Name = "Start Room";
+            Name = "Start Room";    //assigns the room name
         }
-        public override string[] GetChoices()
+        public override string[] GetChoices()   //creates the relevant chices for the start room
         {
             choices.Clear();
             choices.Add("Shop");
@@ -15,7 +15,7 @@ namespace SlutProject
             choices.Add("Stay");
             return base.GetChoices();
         }
-        public override string[] GetActions()
+        public override string[] GetActions()   //Gives specific room actions
         {
             Actions = new string[]{
                 "Check Info Board",

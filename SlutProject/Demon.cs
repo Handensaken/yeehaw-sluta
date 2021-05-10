@@ -11,7 +11,7 @@ namespace SlutProject
             HP = 45;
             maxHP = HP;
         }
-        public override void SuperAttack(Child oC, Player p, Child self)
+        public override void SuperAttack(Child oC, Player p, Child self)    //overrides the super attack method and damages the enemy by 30% of their current hp
         {
             float damage = (float)oC.HP;
             damage *= 0.3f;
@@ -28,7 +28,7 @@ namespace SlutProject
             oC.Hurt((int)damage);
             Energy--;
         }
-        public override int Attack()
+        public override int Attack()    //overrides attack as per usual :))))))))))))))
         {
             int returningValue = 0;
             for (int i = 0; i < 4; i++)

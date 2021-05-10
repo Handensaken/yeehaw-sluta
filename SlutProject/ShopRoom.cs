@@ -6,16 +6,16 @@ namespace SlutProject
     {
         public ShopRoom()
         {
-            Name = "Shop Room";
+            Name = "Shop Room"; //assigns room name
         }
-        public override string[] GetChoices()
+        public override string[] GetChoices()   //Gets room specific movement options
         {
             choices.Clear();
             choices.Add("Start");
             choices.Add("Stay");
             return base.GetChoices();
         }
-        public override string[] GetActions()
+        public override string[] GetActions()   //Gets room specific actions
         {
             Actions = new string[]{
                 "Shop",

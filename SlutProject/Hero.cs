@@ -10,8 +10,9 @@ namespace SlutProject
             Alignment = "A Hero!";
             HP = 35;
             maxHP = HP;
+            //as per usual the basic shizz
         }
-        public override void SuperAttack(Child oC, Player p, Child self)
+        public override void SuperAttack(Child oC, Player p, Child self)    //overrides the super attack method and heals the user and their party
         {
 
             if (IsWild)
@@ -29,7 +30,7 @@ namespace SlutProject
             }
             Energy--;
         }
-        public override int Attack()
+        public override int Attack()    //overrides the attack method and finds damage :)
         {
             int returningValue = 0;
             for (int i = 0; i < 6; i++)
